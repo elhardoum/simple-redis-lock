@@ -23,9 +23,9 @@ let my_lock = simple_redis_lock('test_lock')
 (async _ =>
 {
   try {
-    // aquire the lock
-    await my_lock.aquire()
-    console.log('Lock has been aquired. Doing stuff..')
+    // acquire the lock
+    await my_lock.acquire()
+    console.log('Lock has been acquired. Doing stuff..')
 
     // release the lock
     await my_lock.release()
@@ -50,11 +50,11 @@ my_lock.onRetry(() =>
 
 ## Available methods
 
-#### `LockObject.aquire()`
+#### `LockObject.acquire()`
 
-Returns a promise that resolves when your lock has been aquired successfully, or rejects when the task is aborted.
+Returns a promise that resolves when your lock has been acquired successfully, or rejects when the task is aborted.
 
-Note: the aquire task will run forever by default, until aborted either with `LockObject.abort()` method or via `ABORT_AFTER_MS` option key.
+Note: the acquire task will run forever by default, until aborted either with `LockObject.abort()` method or via `ABORT_AFTER_MS` option key.
 
 #### `LockObject.release()`
 
@@ -62,7 +62,7 @@ Returns a promise that resolves when your lock key has been freed from redis. It
 
 #### `LockObject.abort()`
 
-Allows you to abort the process directly and it will reject the `LockObject.aquire()` upon next acquisition attempt.
+Allows you to abort the process directly and it will reject the `LockObject.acquire()` upon next acquisition attempt.
 
 #### `LockObject.onRetry(callback)`
 

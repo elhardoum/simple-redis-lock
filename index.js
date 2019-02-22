@@ -1,6 +1,6 @@
 const redisClient = config => require('redis').createClient( ... ( config.REDIS_CONNECTION || [] ) )
 
-const aquireLock = (id, config) => new Promise((resolve, reject) => redisClient(config).set(
+const acquireLock = (id, config) => new Promise((resolve, reject) => redisClient(config).set(
   ... ( [ `${config.KEY_PREFIX+id}`, 1, 'NX' ] ),
   ... ( 'number' === typeof config.NX_EXPIRES ? [ 'EX', config.NX_EXPIRES ] : [] ),
   (err, reply) => err ? reject(err) : resolve(reply)
@@ -30,7 +30,7 @@ module.exports = ( key, options ) =>
   this.abort = _ => this._abort = true
 
   // executor
-  this.aquire = _ => new Promise(async (resolve, reject) =>
+  this.acquire = _ => new Promise(async (resolve, reject) =>
   {
     // record initial start time
     this.begin_time = +new Date
@@ -47,9 +47,9 @@ module.exports = ( key, options ) =>
         return reject()
       }
 
-      try { this._aquired = await aquireLock(key, config) } catch (e) { /* pass */ }
+      try { this._acquired = await acquireLock(key, config) } catch (e) { /* pass */ }
 
-      if ( this._aquired ) {
+      if ( this._acquired ) {
         return resolve()
       }
 
