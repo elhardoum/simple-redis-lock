@@ -1,4 +1,3 @@
-
 const redisClient = config => require('redis').createClient( ... ( config.REDIS_CONNECTION || [] ) )
 
 const aquireLock = (id, config) => new Promise((resolve, reject) => redisClient(config).set(
@@ -25,9 +24,6 @@ module.exports = ( key, options ) =>
   // merge configuration
   options && 'object' === typeof options && Object.assign(config, options)
 
-  // record initial start time
-  this.begin_time = this.begin_time || +new Date
-
   // retry event
   this.onRetry = callback => this._onRetry = callback 
 
@@ -37,12 +33,18 @@ module.exports = ( key, options ) =>
   // executor
   this.aquire = _ => new Promise(async (resolve, reject) =>
   {
+    // record initial start time
+    this.begin_time = +new Date
+
+    // reset abort to default
+    this._abort = null
+
     while ( true ) {
       if ( this._abort ) {
         return reject()
       }
 
-      if ( parseInt(config.ABORT_AFTER_MS) > 0 && +new Date - this.begin_time > config.ABORT_AFTER_MS ) {
+      if ( parseInt(config.ABORT_AFTER_MS) > 0 && +new Date - this.begin_time > parseInt(config.ABORT_AFTER_MS) ) {
         return reject()
       }
 

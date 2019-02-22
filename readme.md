@@ -50,21 +50,21 @@ my_lock.onRetry(() =>
 
 ## Available methods
 
-#### `Lock.aquire()`
+#### `LockObject.aquire()`
 
 Returns a promise that resolves when your lock has been aquired successfully, or rejects when the task is aborted.
 
-Note: the aquire task will run forever by default, until aborted either with `Lock.abort()` method or via `ABORT_AFTER_MS` option key.
+Note: the aquire task will run forever by default, until aborted either with `LockObject.abort()` method or via `ABORT_AFTER_MS` option key.
 
-#### `Lock.release()`
+#### `LockObject.release()`
 
 Returns a promise that resolves when your lock key has been freed from redis. It would reject the promise if the key has not been deleted (see redis [`DEL`](https://redis.io/commands/del))
 
-### `Lock.abort()`
+#### `LockObject.abort()`
 
-Allows you to abort the process directly and it will reject the `Lock.aquire()` upon next acquisition attempt.
+Allows you to abort the process directly and it will reject the `LockObject.aquire()` upon next acquisition attempt.
 
-### `Lock.onRetry(callback)`
+#### `LockObject.onRetry(callback)`
 
 Hook into the retry process.
 
