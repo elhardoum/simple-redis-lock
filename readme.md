@@ -17,8 +17,8 @@ const simple_redis_lock = require('simple-redis-lock')
 ## Simple Usage
 
 ```javascript
-// create a lock object
-let my_lock = simple_redis_lock('test')
+// create a lock object with a lock name
+let my_lock = simple_redis_lock('test_lock')
 
 (async _ =>
 {
@@ -74,7 +74,7 @@ You can pass the custom settings via the second argument passed to the object in
 
 ```javascript
 // create a lock object
-let my_lock = simple_redis_lock('test', {
+let my_lock = simple_redis_lock('test_lock', {
   // options
   DELAY_MS: 50,
   ABORT_AFTER_MS: 5000, // 5 seconds

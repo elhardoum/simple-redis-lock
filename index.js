@@ -7,8 +7,7 @@ const aquireLock = (id, config) => new Promise((resolve, reject) => redisClient(
 ))
 
 const releaseLock = (id, config) => new Promise((resolve, reject) =>
-  redisClient(config).del(`${config.KEY_PREFIX+id}`, (err, reply) => err ? reject(err) : resolve(reply))
-)
+  redisClient(config).del(`${config.KEY_PREFIX+id}`, (err, reply) => err ? reject(err) : resolve(reply)))
 
 module.exports = ( key, options ) =>
 {
