@@ -1,13 +1,19 @@
-const redisClient = config => require('redis').createClient( ... ( config.REDIS_CONNECTION || [] ) )
+let redisClient = {}
 
-const acquireLock = (id, config) => new Promise((resolve, reject) => redisClient(config).set(
+const getRedisClient = config =>
+  redisClient.connected ? redisClient : (redisClient = require('redis').createClient( ... ( config.REDIS_CONNECTION || [] ) ))
+
+const acquireLock = (id, config) => new Promise((resolve, reject) => getRedisClient(config).set(
   ... ( [ `${config.KEY_PREFIX+id}`, 1, 'NX' ] ),
   ... ( 'number' === typeof config.NX_EXPIRES ? [ 'EX', config.NX_EXPIRES ] : [] ),
   (err, reply) => err ? reject(err) : resolve(reply)
 ))
 
 const releaseLock = (id, config) => new Promise((resolve, reject) =>
-  redisClient(config).del(`${config.KEY_PREFIX+id}`, (err, reply) => err ? reject(err) : resolve(reply)))
+  getRedisClient(config).del(`${config.KEY_PREFIX+id}`, (err, reply) => (disconnect(), err ? reject(err) : resolve(reply))))
+
+// disconnect redis client
+const disconnect = () => redisClient.connected && redisClient.end(true)
 
 module.exports = ( key, options ) =>
 {
@@ -40,21 +46,21 @@ module.exports = ( key, options ) =>
 
     while ( true ) {
       if ( this._abort ) {
-        return reject()
+        return disconnect(), reject()
       }
 
       if ( parseInt(config.ABORT_AFTER_MS) > 0 && +new Date - this.begin_time > parseInt(config.ABORT_AFTER_MS) ) {
-        return reject()
+        return disconnect(), reject()
       }
 
-      try { this._acquired = await acquireLock(key, config) } catch (e) { /* pass */ }
+      try { this._acquired = await acquireLock(key, config) } catch (e) { console.log(e) /* pass */ }
 
       if ( this._acquired ) {
-        return resolve()
+        return disconnect(), resolve()
       }
 
       // temporarily block the loop
-      await new Promise(res => setTimeout(_ => res(1), config.DELAY_MS||100))
+      await new Promise(res => setTimeout(res, config.DELAY_MS||100))
 
       // maybe call user retry definition
       'function' === typeof this._onRetry && this._onRetry()

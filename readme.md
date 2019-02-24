@@ -18,7 +18,7 @@ const simple_redis_lock = require('simple-redis-lock')
 
 ```javascript
 // create a lock object with a lock name
-let my_lock = simple_redis_lock('test_lock')
+const my_lock = simple_redis_lock('test_lock')
 
 (async _ =>
 {

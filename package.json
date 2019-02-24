@@ -1,6 +1,6 @@
 {
   "name": "simple-redis-lock",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Simple redis locks using promises and redis `SETNX`.",
   "main": "index.js",
   "scripts": {
